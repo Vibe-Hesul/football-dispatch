@@ -1,0 +1,5 @@
+# Only the two app files belong in this repo
+*.pdf
+*.md
+*.txt
+.claude/
