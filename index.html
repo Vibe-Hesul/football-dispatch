@@ -214,6 +214,9 @@ function pipsHtml(conf) {
 }
 
 function renderMatch(m) {
+  if (m.editorial) {
+    return `<article class="match-article">${m.kicker?`<div class="match-kicker">${m.kicker}</div>`:''}${m.hed?`<h3 class="match-hed">${m.hed}</h3>`:''}<div class="match-body">${m.thoughts?`<p>${m.thoughts}</p>`:''}${m.summary?`<p>${m.summary}</p>`:''}</div></article>`;
+  }
   const res = m.result ? {home:m.result[0], away:m.result[1]} : results[m.id];
   const hasPred = m.prediction !== null;
   const isHit = res && hasPred && res.home===m.prediction[0] && res.away===m.prediction[1];
@@ -274,7 +277,7 @@ function buildList() {
   list.innerHTML = '';
   matchdays.forEach((md, i) => {
     const isCurrent = i===current;
-    const hasPreds = md.matches.some(m=>m.prediction!==null);
+    const hasPreds = md.matches.some(m=>m.prediction!==null||m.editorial);
     const isEmpty  = md.matches.length===0;
     const statusClass = isCurrent?'status-viewing':hasPreds?'status-filed':'status-pending';
     const statusText  = isCurrent?'Viewing':hasPreds?'Filed':isEmpty?'Upcoming':'Pending';
