@@ -197,7 +197,8 @@ footer { border-top:3px double var(--rule-heavy); padding:20px 24px; text-align:
 <footer>The Football Dispatch &nbsp;·&nbsp; FIFA World Cup 2026 &nbsp;·&nbsp; Predictions by Claude &nbsp;·&nbsp; For entertainment purposes only</footer>
 
 <!-- Data file — replace this with each new edition from Claude -->
-<script src="dispatch-data.js"></script>
+<!-- Loaded with a cache-busting query so a freshly filed edition always shows immediately -->
+<script>document.write('<scr'+'ipt src="dispatch-data.js?v=' + Date.now() + '"><\/scr'+'ipt>');</script>
 
 <script>
 // ─── APP LOGIC — DO NOT EDIT ──────────────────────────────────────────────────
