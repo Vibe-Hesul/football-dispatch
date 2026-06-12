@@ -57,7 +57,6 @@ const matchdays = [
 
   // ── DAY 3 · Sat 13 Jun ─────────────────────────────────────────────────────
   {
-  {
     id:'md3', label:'Day 3 · Sat 13 Jun', date:'Saturday, June 13, 2026',
     published:'June 12, 2026',
     headline:'Brazil, Scotland and the Day\'s Four Battles',
