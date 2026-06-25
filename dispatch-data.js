@@ -351,7 +351,8 @@ const matchdays = [
     ]
   },
 
-  // ── DAY 17 · Sat 27 Jun ────────────────────────────────────────────────────{
+  // ── DAY 17 · Sat 27 Jun ────────────────────────────────────────────────────
+  {
     id:'md17', label:'Day 17 · Sat 27 Jun', date:'Saturday, June 27, 2026',
     published:null,
     headline:'The Reckoning — Groups J, K and L',
