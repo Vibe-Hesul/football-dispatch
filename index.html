@@ -223,9 +223,27 @@ footer { border-top:3px double var(--rule-heavy); padding:20px 24px; text-align:
 <script>
 // ─── APP LOGIC — DO NOT EDIT ──────────────────────────────────────────────────
 
+// ── DATA RESILIENCE — a broken or empty publish must never blank the page ──
+// Use the freshly loaded editions when they are valid; otherwise fall back to
+// the last good copy this browser saw, so the paper always renders something.
+let MD = [];
+try {
+  const fresh = (typeof matchdays !== 'undefined') ? matchdays : null;
+  const clean = Array.isArray(fresh) ? fresh.filter(md => md && typeof md === 'object' && Array.isArray(md.matches)) : [];
+  if (clean.length) {
+    MD = clean;
+    try { localStorage.setItem('wc26_good', JSON.stringify(clean)); } catch(e){}
+  } else {
+    MD = JSON.parse(localStorage.getItem('wc26_good') || '[]');
+  }
+} catch(e) {
+  try { MD = JSON.parse(localStorage.getItem('wc26_good') || '[]'); } catch(_) { MD = []; }
+}
+
 let results = {}, current = 0;
 try { Object.assign(results, JSON.parse(localStorage.getItem('wc26_r')||'{}')); } catch(e){}
-try { current = Math.min(parseInt(localStorage.getItem('wc26_ed')||'0')||0, matchdays.length-1); } catch(e){}
+try { current = Math.min(parseInt(localStorage.getItem('wc26_ed')||'0')||0, MD.length-1); } catch(e){}
+if (current < 0 || current >= MD.length) current = 0;
 
 function pipsHtml(conf) {
   const n = conf==='high'?3:conf==='med'?2:conf==='low'?1:0;
@@ -264,7 +282,8 @@ function renderMatch(m) {
 function buildEditions() {
   const page = document.getElementById('page');
   page.innerHTML = '';
-  matchdays.forEach((md, i) => {
+  if (!MD.length) { page.innerHTML = '<div class="edition-empty">Loading the latest edition…<br>If this message persists, please refresh.</div>'; return; }
+  MD.forEach((md, i) => {
     const div = document.createElement('div');
     div.className = 'edition'+(i===current?' active':'');
     div.id = 'edition-'+md.id;
@@ -296,7 +315,7 @@ function buildEditions() {
 function buildList() {
   const list = document.getElementById('ed-list');
   list.innerHTML = '';
-  matchdays.forEach((md, i) => {
+  MD.forEach((md, i) => {
     const isCurrent = i===current;
     const hasPreds = md.matches.some(m=>m.prediction!==null||m.editorial);
     const isEmpty  = md.matches.length===0;
@@ -317,17 +336,17 @@ function buildList() {
 }
 
 function updateBar() {
-  const md = matchdays[current];
+  const md = MD[current]; if (!md) return;
   document.getElementById('ed-trigger-title').textContent = md.label+' — '+md.headline;
   document.getElementById('btn-prev').disabled = current===0;
-  document.getElementById('btn-next').disabled = current===matchdays.length-1;
+  document.getElementById('btn-next').disabled = current===MD.length-1;
 }
 
 function goTo(i) {
-  if(i<0||i>=matchdays.length) return;
-  document.getElementById('edition-'+matchdays[current].id)?.classList.remove('active');
+  if(i<0||i>=MD.length) return;
+  document.getElementById('edition-'+MD[current].id)?.classList.remove('active');
   current=i;
-  document.getElementById('edition-'+matchdays[current].id)?.classList.add('active');
+  document.getElementById('edition-'+MD[current].id)?.classList.add('active');
   try { localStorage.setItem('wc26_ed',current); } catch(e){}
   updateBar(); buildList(); updateStats();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -357,7 +376,7 @@ function saveResult(id) {
 }
 
 function updateStats() {
-  const all=matchdays.flatMap(md=>md.matches);
+  const all=MD.flatMap(md=>md.matches);
   const predicted=all.filter(m=>m.prediction!==null).length;
   const played=all.filter(m=>results[m.id]);
   const hits=played.filter(m=>{ const r=results[m.id]; return m.prediction&&r.home===m.prediction[0]&&r.away===m.prediction[1]; });

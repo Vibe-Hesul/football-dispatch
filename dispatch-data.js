@@ -1,4 +1,4 @@
-/ ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // THE FOOTBALL DISPATCH — FIFA World Cup 2026
 // dispatch-data.js  ·  One edition per matchday (34 editions, 104 matches)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -567,7 +567,7 @@ const matchdays = [
     matches:[
       { id:'m104', group:'Final', home:'W Match 101', hf:'⚽', away:'W Match 102', af:'⚽', prediction:null, confidence:null, thoughts:null, summary:null },
     ]
-  },
+  }
 
 ];
 
